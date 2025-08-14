@@ -487,24 +487,37 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Style pour le message de téléchargement */
+        .download-message {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(76, 201, 240, 0.1);
+            border-radius: 5px;
+            font-size: 0.9em;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header animate__animated animate__fadeIn">
             <img src="images/logo.png" alt="Logo de l'application" class="logo animate__animated animate__bounceIn">
-            <h1>Téléchargez AFRICA BOX pour Android</h1>
-            <p class="subtitle">La meilleure expérience de streaming</p>
+            <h1>Téléchargez AFRICA BOX pour votre appareil Android</h1>
+            <p class="subtitle">La meilleure expérience de streaming sur votre Android</p>
             <div class="version-badge animate__animated animate__fadeInUp">Version: 1.6 | Taille: 29 MB</div>
         </header>
         
         <main class="main-content">
             <section class="download-section animate__animated animate__fadeInUp">
-                <a href="ressources/africabox.apk" class="download-btn" download>
+                <button id="downloadBtn" class="download-btn">
                     <i class="fas fa-download"></i> Télécharger l'APK
-                </a>
+                </button>
                 <div class="download-stats">
                     <i class="fas fa-users"></i> Plus de 10,000 téléchargements
+                </div>
+                <div class="download-message" id="downloadMessage">
+                    <i class="fas fa-circle-notch fa-spin"></i> Préparation du téléchargement...
                 </div>
             </section>
             
@@ -551,7 +564,6 @@
                     <p>Assurez-vous que votre appareil est compatible avec Android 5.0 (Lollipop) ou supérieur. L'activation des sources inconnues peut présenter un risque de sécurité - n'installez que des applications de confiance.</p>
                 </div>
             </section>
-            
             
             <section class="faq animate__animated animate__fadeIn">
                 <h2 class="section-title">Questions fréquentes</h2>
@@ -604,15 +616,42 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        // Animation au scroll
         $(document).ready(function() {
+            // Configuration du téléchargement
+            const fileId = '11M0sxzIi-0B2BoEgMIHC9OuqVvIyucWh';
+            const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}&confirm=t&uuid=`;
+            
+            // Gestion du bouton de téléchargement
+            $('#downloadBtn').click(function() {
+                const downloadMessage = $('#downloadMessage');
+                downloadMessage.show();
+                
+                // Méthode 1: Création d'un lien temporaire
+                setTimeout(() => {
+                    const tempLink = document.createElement('a');
+                    tempLink.href = directDownloadUrl;
+                    tempLink.setAttribute('download', 'africabox.apk');
+                    tempLink.style.display = 'none';
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    
+                    downloadMessage.html('<i class="fas fa-cloud-download-alt"></i> Téléchargement en cours...');
+                    
+                    // Méthode 2: Ouverture dans un nouvel onglet si échec
+                    setTimeout(() => {
+                        window.open(directDownloadUrl, '_blank');
+                    }, 1500);
+                }, 300);
+            });
+            
             // FAQ toggle
             $('.faq-question').click(function() {
                 $(this).parent().toggleClass('active');
                 $(this).siblings('.faq-answer').slideToggle();
             });
             
-            // Animation des éléments au scroll
+            // Animation au scroll
             function animateOnScroll() {
                 $('.animate__animated').each(function() {
                     var position = $(this).offset().top;
@@ -625,23 +664,16 @@
                 });
             }
             
-            // Exécuter au chargement
-            animateOnScroll();
-            
-            // Et au scroll
-            $(window).scroll(function() {
-                animateOnScroll();
-            });
-            
             // Compteur de téléchargements (simulé)
             let downloadCount = 10000;
             setInterval(() => {
                 downloadCount += Math.floor(Math.random() * 10);
                 $('.download-stats').html(`<i class="fas fa-users"></i> Plus de ${downloadCount.toLocaleString()} téléchargements`);
             }, 5000);
+            
+            animateOnScroll();
+            $(window).scroll(animateOnScroll);
         });
     </script>
 </body>
-
 </html>
-
